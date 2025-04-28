@@ -9,7 +9,7 @@ class UsersTestCase(APITestCase):
             "username": "Test",
             "password": "test",
             "password_confirm": "test",
-            "tg_chat_id": 1234567890
+            "telegram_id": 1234567890
         }
         resp = self.client.post('/users/register/', data)
         self.assertEqual(resp.status_code, status.HTTP_201_CREATED)

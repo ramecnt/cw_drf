@@ -41,12 +41,12 @@ class HabitTestCase(APITestCase):
         )
 
     def test_habit_list(self):
-        response = self.client.get('/habits/')
+        response = self.client.get('/habits/list/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         data = response.json()
         self.assertEqual(len(data['results']), 1)
-        self.assertEqual(data['results'][0]['action'], "test2")
+        self.assertEqual(data['results'][0]['action_habit'], "test2")
 
     def test_HabitCreate(self):
         data = {
@@ -54,7 +54,7 @@ class HabitTestCase(APITestCase):
             "time": "10:00:00",
             "action_habit": "test3",
             "pleasant_habit": False,
-            "frequency": "day",
+            "frequency": "daily",
             "reward": "test",
             "time_to_do": "00:01:00",
             "is_public": True
@@ -62,7 +62,7 @@ class HabitTestCase(APITestCase):
         response = self.client.post('/habits/create/', data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-        habit = Habit.objects.filter(action="Meditate").first()
+        habit = Habit.objects.filter(action_habit="test3").first()
         self.assertIsNotNone(habit)
         self.assertEqual(habit.user, self.user)
 
@@ -73,7 +73,7 @@ class HabitTestCase(APITestCase):
             "action_habit": "test",
             "pleasant_habit": False,
             "related_habit": self.habit2.id,
-            "frequency": "day",
+            "frequency": "daily",
             "reward": "test",
             "time_to_do": "00:02:10",
             "is_public": True
@@ -84,8 +84,8 @@ class HabitTestCase(APITestCase):
             "action_habit": "test",
             "pleasant_habit": False,
             "related_habit": self.habit1.id,
-            "frequency": "day",
-            "reward": "00:02:00",
+            "frequency": "daily",
+            "time_to_do": "00:02:00",
             "is_public": True
         }
         response = self.client.post('/habits/create/', invalid1)
@@ -95,7 +95,7 @@ class HabitTestCase(APITestCase):
         errors = response.json()
         errors2 = response2.json()
         self.assertIn("Время выполнения не должно превышать 0:02:00.", errors["non_field_errors"])
-        self.assertIn("Разрешёно только выбрать связанную привычку или вознаграждение", errors["non_field_errors"])
+        self.assertIn("Выберите либо связанную привычку либо вознаграждение", errors["non_field_errors"])
         self.assertIn("Можно связывать только полезные с приятными привычками", errors2["non_field_errors"])
 
     def test_HabitUpdate(self):
