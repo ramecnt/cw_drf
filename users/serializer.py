@@ -19,7 +19,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         user = User.objects.create_user(
             username=validated_data['username'],
             password=validated_data['password'],
-            tg_chat_id=validated_data['tg_chat_id']
+            telegram_id=validated_data['telegram_id'],
         )
         return user
 
